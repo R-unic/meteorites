@@ -37,7 +37,6 @@ export class MysteryCubeSpawn extends BaseComponent<Attributes, Part> implements
     const min = this.instance.Position.sub(offset);
     const max = this.instance.Position.add(offset);
     return randomVector3(min, max)
-      .sub(Vector3.yAxis.mul(this.instance.Size.Y / 2))
       .add(Vector3.yAxis.mul(Assets.Cube.Size.Y / 2));
   }
 
