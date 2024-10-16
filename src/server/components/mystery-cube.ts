@@ -21,11 +21,16 @@ interface MysteryCubeModel extends MeshPart {
   Sparkles: ParticleEmitter;
 }
 
-@Component({ tag: "MysteryCube" })
+@Component({
+  tag: "MysteryCube",
+  ancestorWhitelist: [World]
+})
 export class MysteryCube extends DestroyableComponent<{}, MysteryCubeModel> implements OnStart {
   public onStart(): void {
-    this.janitor.Add(() => MysteryCubeSpawn.cache.ReturnPart(this.instance));
-    this.janitor.Add(() => this.instance.RemoveTag("MysteryCube"));
+    this.janitor.Add(() => {
+      MysteryCubeSpawn.cache.ReturnPart(this.instance);
+      this.instance.RemoveTag("MysteryCube");
+    });
 
     const proximityPrompt = this.janitor.Add(new Instance("ProximityPrompt"));
     proximityPrompt.ActionText = "Interact";

@@ -35,6 +35,7 @@
     "@flamework/core": "latest",
     "@flamework/networking": "latest",
     "@rbxts/builders": "^1.0.2",
+    "@rbxts/camera-shaker": "^1.0.8",
     "@rbxts/charm": "^0.5.3",
     "@rbxts/cmdr": "^1.12.1",
     "@rbxts/gamejoy": "^1.1.4",
