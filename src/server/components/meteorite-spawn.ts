@@ -13,18 +13,19 @@ import type { SchedulingService } from "server/services/scheduling";
 
 const CACHE = new PartCacheModule(Assets.Meteorite, 15);
 const GROUND_CHECK_DISTANCE = 1000;
+const METEORITE_SIZE = Assets.Meteorite.Size.Z;
 const INDICATOR_HEIGHT = 0.2;
-const INDICATOR_SIZE_MIN = new Vector3(4, INDICATOR_HEIGHT, 4);
-const INDICATOR_SIZE_MAX = new Vector3(12, INDICATOR_HEIGHT, 12);
+const INDICATOR_SIZE_MIN = new Vector3(METEORITE_SIZE / 3, INDICATOR_HEIGHT, METEORITE_SIZE / 3);
+const INDICATOR_SIZE_MAX = new Vector3(METEORITE_SIZE, INDICATOR_HEIGHT, METEORITE_SIZE);
 const INDICATOR_FADE_TWEEN_INFO = new TweenInfoBuilder()
-  .SetTime(1)
+  .SetTime(0.5)
   .Build();
 const INDICATOR_GROW_LENGTH = 1.5;
 const INDICATOR_GROW_TWEEN_INFO = new TweenInfoBuilder()
   .SetTime(INDICATOR_GROW_LENGTH)
   .Build();
 const FALL_TWEEN_INFO = new TweenInfoBuilder()
-  .SetTime(1)
+  .SetTime(INDICATOR_GROW_LENGTH)
   .SetEasingStyle(Enum.EasingStyle.Quart)
   .SetEasingDirection(Enum.EasingDirection.In)
   .Build();
@@ -87,17 +88,20 @@ export class MeteoriteSpawn extends BaseComponent<Attributes, Part> implements O
     indicator.Position = destination.add(Vector3.yAxis.mul(INDICATOR_HEIGHT / 2));
     indicator.Parent = World;
 
-    tween(indicator, INDICATOR_GROW_TWEEN_INFO, { Size: INDICATOR_SIZE_MAX })
-      .Completed.Once(() => tween(indicator, INDICATOR_FADE_TWEEN_INFO, {
-        Size: Vector3.zero,
-        Transparency: 1
-      }));
-
-    task.delay(INDICATOR_GROW_LENGTH / 1.5, () => {
-      const meteorite = CACHE.GetPart();
-      meteorite.Position = origin;
-      tween(meteorite, FALL_TWEEN_INFO, { Position: destination })
-        .Completed.Once(() => CACHE.ReturnPart(meteorite));
+    tween(indicator, INDICATOR_GROW_TWEEN_INFO, {
+      Size: INDICATOR_SIZE_MAX,
+      Transparency: 0.1
     });
+
+    const meteorite = CACHE.GetPart();
+    meteorite.Position = origin;
+    tween(meteorite, FALL_TWEEN_INFO, { Position: destination })
+      .Completed.Once(() => {
+        CACHE.ReturnPart(meteorite);
+        tween(indicator, INDICATOR_FADE_TWEEN_INFO, {
+          Size: Vector3.zero,
+          Transparency: 1
+        });
+      });
   }
 }
