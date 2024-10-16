@@ -1,7 +1,7 @@
 import { Workspace as World } from "@rbxts/services";
 import type { StorableVector3 } from "shared/data-models/common";
 
-const { abs } = math;
+const { abs, random } = math;
 
 export const toStorableVector3 = ({ X, Y, Z }: Vector3) => ({ x: X, y: Y, z: Z });
 export const toUsableVector3 = ({ x, y, z }: StorableVector3) => new Vector3(x, y, z);
@@ -14,6 +14,14 @@ export function toRegion3({ CFrame, Size }: Part, areaShrink = 0): Region3 {
   return new Region3(
     new Vector3(x - wsx + areaShrink, y - wsy, z - wsz + areaShrink),
     new Vector3(x + wsx - areaShrink, y + wsy, z + wsz - areaShrink)
+  );
+}
+
+export function randomVector3(min: Vector3, max: Vector3): Vector3 {
+  return new Vector3(
+    random(min.X, max.X),
+    random(min.Y, max.Y),
+    random(min.Z, max.Z),
   );
 }
 
